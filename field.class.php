@@ -15,23 +15,42 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    datafield
- * @subpackage lockableurl
+ * Extension of URL datafield with optional locking.
+ *
+ * @package    datafield_lockableurl
  * @copyright  2024 onwards Lafayette College ITS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use core\notification;
 
-require_once __DIR__ . '/../url/field.class.php';
+defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/../url/field.class.php');
+
+/**
+ * Extension of URL datafield with optional locking.
+ *
+ * @package    datafield_lockableurl
+ * @copyright  2024 onwards Lafayette College ITS
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class data_field_lockableurl extends data_field_url {
+    /** @var string The internal datafield type */
     public $type = 'lockableurl';
 
-    function display_add_field($recordid = 0, $formdata = null) {
+    /**
+     * Output control for editing content.
+     *
+     * @param int $recordid the id of the data record.
+     * @param object $formdata the submitted form.
+     *
+     * @return string
+     */
+    public function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
-        require_once($CFG->dirroot. '/repository/lib.php'); // necessary for the constants used in args
+        require_once($CFG->dirroot. '/repository/lib.php'); // Necessary for the constants used in args.
 
         $context = \context_module::instance($this->cm->id);
         $readonly = '';
@@ -60,7 +79,7 @@ class data_field_lockableurl extends data_field_url {
                 $text = $formdata->$fieldname;
             }
         } else if ($recordid) {
-            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+            if ($content = $DB->get_record('data_content', ['fieldid' => $this->field->id, 'recordid' => $recordid])) {
                 $url  = $content->content;
                 $text = $content->content1;
             }
@@ -98,7 +117,7 @@ class data_field_lockableurl extends data_field_url {
                     'value="' . s($text) . '" size="40" class="form-control d-inline"' . $readonly .'/></td></tr>';
             $str .= '</table>';
         } else {
-            // Just the URL field
+            // Just the URL field.
             $str .= $label;
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'"';
             $str .= ' size="40" class="mod-data-input form-control d-inline"' . $readonly . '/>';
@@ -108,11 +127,8 @@ class data_field_lockableurl extends data_field_url {
             }
         }
 
-        // print out file picker
-        //$str .= $OUTPUT->render($fp);
-
-        $module = array('name'=>'data_urlpicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
-        $PAGE->requires->js_init_call('M.data_urlpicker.init', array($options), true, $module);
+        $module = ['name' => 'data_urlpicker', 'fullpath' => '/mod/data/data.js', 'requires' => ['core_filepicker']];
+        $PAGE->requires->js_init_call('M.data_urlpicker.init', [$options], true, $module);
         $str .= '</div>';
         return $str;
     }

@@ -24,14 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$capabilities = array(
-    'datafield/lockableurl:manage' => array(
+$capabilities = [
+    'datafield/lockableurl:manage' => [
         'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        ),
-    )
-);
+        ],
+    ],
+];
